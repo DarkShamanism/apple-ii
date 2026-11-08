@@ -1,0 +1,10 @@
+{
+  "order": ["Green", "Amber", "White", "Color"],
+  "lores": ["#000000", "#9D1B6C", "#402CB8", "#D643FF", "#007A3D", "#808080", "#2F95FF", "#BFD7FF", "#6F4F1F", "#FF6A00", "#C0C0C0", "#FFA0D0", "#2FD141", "#FFF04A", "#72FFB5", "#FFFFFF"],
+  "themes": {
+    "Green": {"Label": "GREEN", "Name": "GREEN PHOSPHOR", "Bg": "#060C06", "Fg": "#41FF5F", "Dim": "#2A9E3C", "Sel": "#41FF5F", "OnSel": "#060C06", "Pri": "#41FF5F", "OnPri": "#060C06", "Key": "#41FF5F", "OnKey": "#060C06", "Bar": "#41FF5F", "OnBar": "#060C06", "Meter": "#41FF5F", "C1": "#41FF5F", "C2": "#41FF5F", "C3": "#41FF5F", "C4": "#41FF5F", "C5": "#41FF5F", "Glow": "#41FF5F", "GlowOpacity": 0.45},
+    "Amber": {"Label": "AMBER", "Name": "AMBER PHOSPHOR", "Bg": "#0D0904", "Fg": "#FFB733", "Dim": "#B07C1A", "Sel": "#FFB733", "OnSel": "#0D0904", "Pri": "#FFB733", "OnPri": "#0D0904", "Key": "#FFB733", "OnKey": "#0D0904", "Bar": "#FFB733", "OnBar": "#0D0904", "Meter": "#FFB733", "C1": "#FFB733", "C2": "#FFB733", "C3": "#FFB733", "C4": "#FFB733", "C5": "#FFB733", "Glow": "#FFB733", "GlowOpacity": 0.45},
+    "White": {"Label": "WHITE", "Name": "WHITE PHOSPHOR", "Bg": "#0A0A0A", "Fg": "#ECEDE6", "Dim": "#9A9C95", "Sel": "#ECEDE6", "OnSel": "#0A0A0A", "Pri": "#ECEDE6", "OnPri": "#0A0A0A", "Key": "#ECEDE6", "OnKey": "#0A0A0A", "Bar": "#ECEDE6", "OnBar": "#0A0A0A", "Meter": "#ECEDE6", "C1": "#ECEDE6", "C2": "#ECEDE6", "C3": "#ECEDE6", "C4": "#ECEDE6", "C5": "#ECEDE6", "Glow": "#ECEDE6", "GlowOpacity": 0.35},
+    "Color": {"Label": "16-COLOR", "Name": "APPLE II COLOR / 16 COLORS", "Bg": "#000000", "Fg": "#FFFFFF", "Dim": "#808080", "Sel": "#402CB8", "OnSel": "#FFFFFF", "Pri": "#FF6A00", "OnPri": "#000000", "Key": "#FFF04A", "OnKey": "#000000", "Bar": "#9D1B6C", "OnBar": "#FFFFFF", "Meter": "#2FD141", "C1": "#2F95FF", "C2": "#FF6A00", "C3": "#2FD141", "C4": "#D643FF", "C5": "#FFF04A", "Glow": "#FFFFFF", "GlowOpacity": 0.3}
+  }
+}

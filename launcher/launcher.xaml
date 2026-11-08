@@ -1,0 +1,605 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Title="Crowbar Launcher" Width="1260" Height="900" MinWidth="1000" MinHeight="720" WindowStartupLocation="CenterScreen"
+ Background="{DynamicResource Bg}" Foreground="{DynamicResource Fg}" FontFamily="{DynamicResource Mono}" FontSize="22">
+ <Window.Resources>
+  <!-- Monitor palette. theme-ui.ps1 replaces these brushes from themes.json; Green is the fallback. -->
+  <SolidColorBrush x:Key="Bg" Color="#060C06"/>
+  <SolidColorBrush x:Key="Fg" Color="#41FF5F"/>
+  <SolidColorBrush x:Key="Dim" Color="#2A9E3C"/>
+  <SolidColorBrush x:Key="Sel" Color="#41FF5F"/>
+  <SolidColorBrush x:Key="OnSel" Color="#060C06"/>
+  <SolidColorBrush x:Key="Pri" Color="#41FF5F"/>
+  <SolidColorBrush x:Key="OnPri" Color="#060C06"/>
+  <SolidColorBrush x:Key="Key" Color="#41FF5F"/>
+  <SolidColorBrush x:Key="OnKey" Color="#060C06"/>
+  <SolidColorBrush x:Key="Bar" Color="#41FF5F"/>
+  <SolidColorBrush x:Key="OnBar" Color="#060C06"/>
+  <SolidColorBrush x:Key="Meter" Color="#41FF5F"/>
+  <SolidColorBrush x:Key="C1" Color="#41FF5F"/>
+  <SolidColorBrush x:Key="C2" Color="#41FF5F"/>
+  <SolidColorBrush x:Key="C3" Color="#41FF5F"/>
+  <SolidColorBrush x:Key="C4" Color="#41FF5F"/>
+  <SolidColorBrush x:Key="C5" Color="#41FF5F"/>
+  <FontFamily x:Key="Mono">Lucida Console</FontFamily>
+
+  <Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/></Style>
+  <Style x:Key="Note" TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="Foreground" Value="{DynamicResource Dim}"/><Setter Property="Margin" Value="0,4,0,0"/></Style>
+  <Style x:Key="Leader" TargetType="Line"><Setter Property="X2" Value="1"/><Setter Property="Stretch" Value="Fill"/><Setter Property="Stroke" Value="{DynamicResource Dim}"/><Setter Property="StrokeThickness" Value="2"/><Setter Property="StrokeDashArray" Value="1 2"/><Setter Property="VerticalAlignment" Value="Center"/><Setter Property="Margin" Value="10,8,10,0"/></Style>
+
+  <!-- Buttons: a Tag letter is drawn as the hotkey chip, as on the 80-column screens. -->
+  <Style TargetType="Button">
+   <Setter Property="Foreground" Value="{DynamicResource Fg}"/><Setter Property="Background" Value="Transparent"/><Setter Property="BorderBrush" Value="{DynamicResource Fg}"/>
+   <Setter Property="Padding" Value="12,3"/><Setter Property="Margin" Value="0,0,10,10"/><Setter Property="MinHeight" Value="40"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button">
+    <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="2" Padding="{TemplateBinding Padding}">
+     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+      <Border x:Name="Chip" Background="{DynamicResource Key}" Padding="5,0" Margin="0,0,10,0" VerticalAlignment="Center"><TextBlock x:Name="ChipText" Text="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" Foreground="{DynamicResource OnKey}" TextWrapping="NoWrap"/></Border>
+      <ContentPresenter VerticalAlignment="Center"/>
+     </StackPanel>
+    </Border>
+    <ControlTemplate.Triggers>
+     <Trigger Property="Tag" Value="{x:Null}"><Setter TargetName="Chip" Property="Visibility" Value="Collapsed"/></Trigger>
+     <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{DynamicResource Fg}"/><Setter Property="Foreground" Value="{DynamicResource Bg}"/><Setter TargetName="Chip" Property="Background" Value="{DynamicResource Bg}"/><Setter TargetName="ChipText" Property="Foreground" Value="{DynamicResource Fg}"/></Trigger>
+     <Trigger Property="IsKeyboardFocused" Value="True"><Setter Property="Background" Value="{DynamicResource Fg}"/><Setter Property="Foreground" Value="{DynamicResource Bg}"/><Setter TargetName="Chip" Property="Background" Value="{DynamicResource Bg}"/><Setter TargetName="ChipText" Property="Foreground" Value="{DynamicResource Fg}"/></Trigger>
+     <Trigger Property="IsEnabled" Value="False"><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="{DynamicResource Dim}"/><Setter Property="BorderBrush" Value="{DynamicResource Dim}"/><Setter Property="Cursor" Value="Arrow"/><Setter TargetName="Chip" Property="Background" Value="{DynamicResource Dim}"/><Setter TargetName="ChipText" Property="Foreground" Value="{DynamicResource Bg}"/></Trigger>
+    </ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="Primary" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+   <Setter Property="Background" Value="{DynamicResource Pri}"/><Setter Property="Foreground" Value="{DynamicResource OnPri}"/><Setter Property="BorderBrush" Value="{DynamicResource Pri}"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button">
+    <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="2" Padding="{TemplateBinding Padding}">
+     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+      <Border x:Name="Chip" Background="{DynamicResource OnPri}" Padding="5,0" Margin="0,0,10,0" VerticalAlignment="Center"><TextBlock x:Name="ChipText" Text="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" Foreground="{DynamicResource Pri}" TextWrapping="NoWrap"/></Border>
+      <ContentPresenter VerticalAlignment="Center"/>
+     </StackPanel>
+    </Border>
+    <ControlTemplate.Triggers>
+     <Trigger Property="Tag" Value="{x:Null}"><Setter TargetName="Chip" Property="Visibility" Value="Collapsed"/></Trigger>
+     <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{DynamicResource Bg}"/><Setter Property="Foreground" Value="{DynamicResource Fg}"/><Setter Property="BorderBrush" Value="{DynamicResource Fg}"/><Setter TargetName="Chip" Property="Background" Value="{DynamicResource Key}"/><Setter TargetName="ChipText" Property="Foreground" Value="{DynamicResource OnKey}"/></Trigger>
+     <Trigger Property="IsKeyboardFocused" Value="True"><Setter Property="Background" Value="{DynamicResource Bg}"/><Setter Property="Foreground" Value="{DynamicResource Fg}"/><Setter Property="BorderBrush" Value="{DynamicResource Fg}"/><Setter TargetName="Chip" Property="Background" Value="{DynamicResource Key}"/><Setter TargetName="ChipText" Property="Foreground" Value="{DynamicResource OnKey}"/></Trigger>
+     <Trigger Property="IsEnabled" Value="False"><Setter Property="Background" Value="Transparent"/><Setter Property="Foreground" Value="{DynamicResource Dim}"/><Setter Property="BorderBrush" Value="{DynamicResource Dim}"/><Setter Property="Cursor" Value="Arrow"/><Setter TargetName="Chip" Property="Background" Value="{DynamicResource Dim}"/><Setter TargetName="ChipText" Property="Foreground" Value="{DynamicResource Bg}"/></Trigger>
+    </ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+
+  <!-- Data entry: underlined fields that turn inverse while you type. -->
+  <Style TargetType="TextBox">
+   <Setter Property="Foreground" Value="{DynamicResource Fg}"/><Setter Property="Background" Value="Transparent"/><Setter Property="BorderBrush" Value="{DynamicResource Dim}"/><Setter Property="BorderThickness" Value="0,0,0,2"/>
+   <Setter Property="CaretBrush" Value="{DynamicResource Fg}"/><Setter Property="SelectionBrush" Value="{DynamicResource Sel}"/><Setter Property="FontFamily" Value="{DynamicResource Mono}"/>
+   <Setter Property="Padding" Value="4,2"/><Setter Property="MinHeight" Value="36"/><Setter Property="VerticalContentAlignment" Value="Center"/><Setter Property="Margin" Value="0,2,0,8"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TextBox">
+    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"><ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/></Border>
+    <ControlTemplate.Triggers><Trigger Property="IsKeyboardFocused" Value="True"><Setter Property="Background" Value="{DynamicResource Sel}"/><Setter Property="Foreground" Value="{DynamicResource OnSel}"/><Setter Property="CaretBrush" Value="{DynamicResource OnSel}"/><Setter Property="BorderBrush" Value="{DynamicResource Sel}"/></Trigger></ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="Log" TargetType="TextBox">
+   <Setter Property="Foreground" Value="{DynamicResource Fg}"/><Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/><Setter Property="FontFamily" Value="{DynamicResource Mono}"/>
+   <Setter Property="IsReadOnly" Value="True"/><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="VerticalScrollBarVisibility" Value="Auto"/><Setter Property="SelectionBrush" Value="{DynamicResource Sel}"/><Setter Property="CaretBrush" Value="{DynamicResource Fg}"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TextBox"><ScrollViewer x:Name="PART_ContentHost"/></ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="ComboBoxItem">
+   <Setter Property="Foreground" Value="{DynamicResource Fg}"/><Setter Property="FontFamily" Value="{DynamicResource Mono}"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ComboBoxItem">
+    <Border x:Name="Row" Background="Transparent" Padding="8,2"><ContentPresenter/></Border>
+    <ControlTemplate.Triggers><Trigger Property="IsHighlighted" Value="True"><Setter TargetName="Row" Property="Background" Value="{DynamicResource Sel}"/><Setter Property="Foreground" Value="{DynamicResource OnSel}"/></Trigger></ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="ComboBox">
+   <Setter Property="Foreground" Value="{DynamicResource Fg}"/><Setter Property="FontFamily" Value="{DynamicResource Mono}"/><Setter Property="MinHeight" Value="36"/><Setter Property="Margin" Value="0,2,0,8"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ComboBox">
+    <Grid>
+     <ToggleButton x:Name="Toggle" Focusable="False" ClickMode="Press" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+      <ToggleButton.Template><ControlTemplate TargetType="ToggleButton"><Border x:Name="Line" Background="Transparent" BorderBrush="{DynamicResource Dim}" BorderThickness="0,0,0,2"><TextBlock Text="v" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{DynamicResource Fg}"/></Border></ControlTemplate></ToggleButton.Template>
+     </ToggleButton>
+     <Border x:Name="Field" Margin="0,0,24,2" IsHitTestVisible="False"><ContentPresenter x:Name="ContentSite" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" Margin="4,2" VerticalAlignment="Center"/></Border>
+     <TextBox x:Name="PART_EditableTextBox" Visibility="Hidden" Margin="0,0,24,0" IsReadOnly="{TemplateBinding IsReadOnly}"/>
+     <Popup x:Name="PART_Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="None">
+      <Border Background="{DynamicResource Bg}" BorderBrush="{DynamicResource Fg}" BorderThickness="2" MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+       <ScrollViewer><ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/></ScrollViewer>
+      </Border>
+     </Popup>
+    </Grid>
+    <ControlTemplate.Triggers>
+     <Trigger Property="IsEditable" Value="True"><Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible"/><Setter TargetName="Field" Property="Visibility" Value="Hidden"/></Trigger>
+     <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Field" Property="Background" Value="{DynamicResource Sel}"/><Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="{DynamicResource OnSel}"/></Trigger>
+    </ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="ListBoxItem">
+   <Setter Property="Foreground" Value="{DynamicResource Fg}"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem">
+    <Border x:Name="Row" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" Padding="8,3" MinHeight="36"><ContentPresenter VerticalAlignment="Center"/></Border>
+    <ControlTemplate.Triggers>
+     <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource Fg}"/></Trigger>
+     <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Row" Property="BorderBrush" Value="{DynamicResource Fg}"/></Trigger>
+     <Trigger Property="IsSelected" Value="True"><Setter TargetName="Row" Property="Background" Value="{DynamicResource Sel}"/><Setter Property="Foreground" Value="{DynamicResource OnSel}"/></Trigger>
+     <Trigger Property="IsEnabled" Value="False"><Setter Property="Foreground" Value="{DynamicResource Dim}"/></Trigger>
+    </ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="ListBox"><Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Foreground" Value="{DynamicResource Fg}"/><Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/></Style>
+  <Style TargetType="CheckBox">
+   <Setter Property="Foreground" Value="{DynamicResource Fg}"/><Setter Property="Margin" Value="0,6,24,6"/><Setter Property="MinHeight" Value="36"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="CheckBox">
+    <StackPanel Orientation="Horizontal" Background="Transparent">
+     <Border Width="22" Height="22" BorderBrush="{DynamicResource Fg}" BorderThickness="2" VerticalAlignment="Center"><Rectangle x:Name="Mark" Margin="3" Fill="{DynamicResource Meter}" Visibility="Collapsed"/></Border>
+     <Border x:Name="Label" Margin="10,0,0,0" Padding="4,0" VerticalAlignment="Center"><ContentPresenter VerticalAlignment="Center"/></Border>
+    </StackPanel>
+    <ControlTemplate.Triggers>
+     <Trigger Property="IsChecked" Value="True"><Setter TargetName="Mark" Property="Visibility" Value="Visible"/></Trigger>
+     <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Label" Property="Background" Value="{DynamicResource Sel}"/><Setter Property="Foreground" Value="{DynamicResource OnSel}"/></Trigger>
+    </ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="RadioButton">
+   <Setter Property="Foreground" Value="{DynamicResource Fg}"/><Setter Property="Margin" Value="0,4"/><Setter Property="MinHeight" Value="40"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="RadioButton">
+    <DockPanel Background="Transparent">
+     <Grid DockPanel.Dock="Left" Width="22" Height="22" VerticalAlignment="Center"><Ellipse Stroke="{DynamicResource Fg}" StrokeThickness="2"/><Ellipse x:Name="Mark" Margin="5" Fill="{DynamicResource Meter}" Visibility="Collapsed"/></Grid>
+     <Border x:Name="Label" Margin="10,0,0,0" Padding="4,0" VerticalAlignment="Center"><ContentPresenter VerticalAlignment="Center"/></Border>
+    </DockPanel>
+    <ControlTemplate.Triggers>
+     <Trigger Property="IsChecked" Value="True"><Setter TargetName="Mark" Property="Visibility" Value="Visible"/></Trigger>
+     <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Label" Property="Background" Value="{DynamicResource Sel}"/><Setter Property="Foreground" Value="{DynamicResource OnSel}"/></Trigger>
+    </ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="SliderPad" TargetType="RepeatButton"><Setter Property="Focusable" Value="False"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="RepeatButton"><Border Background="Transparent"/></ControlTemplate></Setter.Value></Setter></Style>
+  <Style TargetType="Slider">
+   <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Slider">
+    <Grid MinHeight="28" VerticalAlignment="Center">
+     <Border Height="4" Background="{DynamicResource Dim}" VerticalAlignment="Center"/>
+     <Track x:Name="PART_Track">
+      <Track.DecreaseRepeatButton><RepeatButton Command="Slider.DecreaseLarge" Style="{StaticResource SliderPad}"/></Track.DecreaseRepeatButton>
+      <Track.IncreaseRepeatButton><RepeatButton Command="Slider.IncreaseLarge" Style="{StaticResource SliderPad}"/></Track.IncreaseRepeatButton>
+      <Track.Thumb><Thumb Width="14" Height="26"><Thumb.Template><ControlTemplate TargetType="Thumb"><Rectangle Fill="{DynamicResource Meter}"/></ControlTemplate></Thumb.Template></Thumb></Track.Thumb>
+     </Track>
+    </Grid>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="ProgressBar">
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ProgressBar">
+    <Grid>
+     <Border x:Name="PART_Track" BorderBrush="{DynamicResource Meter}" BorderThickness="1"/>
+     <Grid x:Name="PART_Indicator" HorizontalAlignment="Left" Margin="3">
+      <Rectangle Fill="{DynamicResource Meter}"/>
+      <!-- Black gaps turn the bar into tape-counter blocks. -->
+      <Rectangle><Rectangle.Fill><LinearGradientBrush MappingMode="Absolute" StartPoint="0,0" EndPoint="16,0" SpreadMethod="Repeat"><GradientStop Color="#00000000" Offset="0"/><GradientStop Color="#00000000" Offset="0.8"/><GradientStop Color="#FF000000" Offset="0.8"/><GradientStop Color="#FF000000" Offset="1"/></LinearGradientBrush></Rectangle.Fill></Rectangle>
+     </Grid>
+    </Grid>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="ScrollBar"><Setter Property="Background" Value="{DynamicResource Bg}"/></Style>
+
+  <!-- Menu bar: numbered screens, the current one in inverse video. -->
+  <Style TargetType="TabControl">
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TabControl">
+    <DockPanel>
+     <WrapPanel DockPanel.Dock="Top" IsItemsHost="True"/>
+     <Border DockPanel.Dock="Top" Height="2" Background="{DynamicResource Fg}" Margin="0,6,0,14"/>
+     <ContentPresenter ContentSource="SelectedContent"/>
+    </DockPanel>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="TabItem">
+   <Setter Property="Foreground" Value="{DynamicResource Fg}"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/><Setter Property="Cursor" Value="Hand"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TabItem">
+    <Border x:Name="Tab" Background="Transparent" BorderBrush="Transparent" BorderThickness="2" Padding="12,3" Margin="0,0,6,0" MinHeight="40"><ContentPresenter ContentSource="Header" VerticalAlignment="Center"/></Border>
+    <ControlTemplate.Triggers>
+     <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Tab" Property="BorderBrush" Value="{DynamicResource Fg}"/></Trigger>
+     <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Tab" Property="BorderBrush" Value="{DynamicResource Fg}"/></Trigger>
+     <Trigger Property="IsSelected" Value="True"><Setter TargetName="Tab" Property="Background" Value="{DynamicResource Sel}"/><Setter TargetName="Tab" Property="BorderBrush" Value="{DynamicResource Sel}"/><Setter Property="Foreground" Value="{DynamicResource OnSel}"/></Trigger>
+    </ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+
+  <!-- Windows with their title cut into the frame; FrameDouble marks the main window of a screen. -->
+  <Style x:Key="Frame" TargetType="HeaderedContentControl">
+   <Setter Property="Foreground" Value="{DynamicResource Fg}"/>
+   <Setter Property="BorderBrush" Value="{DynamicResource Fg}"/><Setter Property="Padding" Value="16,20,16,8"/><Setter Property="Focusable" Value="False"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="HeaderedContentControl">
+    <Grid Margin="0,14,0,0">
+     <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="2" Padding="{TemplateBinding Padding}"><ContentPresenter/></Border>
+     <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="14,-14,0,0" Padding="8,0" Background="{DynamicResource Bg}"><ContentPresenter ContentSource="Header" TextElement.Foreground="{TemplateBinding BorderBrush}"/></Border>
+    </Grid>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="FrameDouble" TargetType="HeaderedContentControl" BasedOn="{StaticResource Frame}">
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="HeaderedContentControl">
+    <Grid Margin="0,14,0,0">
+     <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="2"><Border Margin="3" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="2" Padding="{TemplateBinding Padding}"><ContentPresenter/></Border></Border>
+     <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="14,-14,0,0" Padding="8,0" Background="{DynamicResource Bg}"><ContentPresenter ContentSource="Header" TextElement.Foreground="{TemplateBinding BorderBrush}"/></Border>
+    </Grid>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+ </Window.Resources>
+
+ <Grid>
+  <Grid Name="Root" Margin="24,14,24,12">
+   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+   <Grid>
+    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+    <TextBlock Text="CROWBAR LAUNCHER" TextWrapping="NoWrap"/>
+    <TextBlock Grid.Column="1" Text="APPLE IIe &lt;-&gt; PC COMPANION" Foreground="{DynamicResource Dim}" TextWrapping="NoWrap"/>
+    <TextBlock Grid.Column="2" Name="VersionText" HorizontalAlignment="Right" TextWrapping="NoWrap"/>
+   </Grid>
+   <Grid Grid.Row="1" Margin="0,6,0,8">
+    <Border Name="MonoRule" Height="8" BorderBrush="{DynamicResource Fg}" BorderThickness="0,2,0,2"/>
+    <UniformGrid Name="ColorBand" Columns="16" Height="10" Visibility="Collapsed">
+     <Rectangle Fill="#000000"/><Rectangle Fill="#9D1B6C"/><Rectangle Fill="#402CB8"/><Rectangle Fill="#D643FF"/><Rectangle Fill="#007A3D"/><Rectangle Fill="#808080"/><Rectangle Fill="#2F95FF"/><Rectangle Fill="#BFD7FF"/>
+     <Rectangle Fill="#6F4F1F"/><Rectangle Fill="#FF6A00"/><Rectangle Fill="#C0C0C0"/><Rectangle Fill="#FFA0D0"/><Rectangle Fill="#2FD141"/><Rectangle Fill="#FFF04A"/><Rectangle Fill="#72FFB5"/><Rectangle Fill="#FFFFFF"/>
+    </UniformGrid>
+   </Grid>
+
+   <TabControl Name="Tabs" Grid.Row="2">
+    <TabItem Header="1 STREAM">
+     <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="0,0,10,0">
+      <Grid>
+       <Grid.ColumnDefinitions><ColumnDefinition Width="5*"/><ColumnDefinition Width="24"/><ColumnDefinition Width="8*"/></Grid.ColumnDefinitions>
+       <HeaderedContentControl Style="{StaticResource Frame}" Header="PROFILE" BorderBrush="{DynamicResource C1}">
+        <StackPanel>
+         <ListBox Name="ProfileList" MaxHeight="190">
+          <ListBox.ItemTemplate><DataTemplate><DockPanel><TextBlock DockPanel.Dock="Right" Text="{Binding Baud}" Margin="16,0,0,0" TextWrapping="NoWrap"/><TextBlock Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/></DockPanel></DataTemplate></ListBox.ItemTemplate>
+         </ListBox>
+         <WrapPanel Margin="0,12,0,0"><Button Name="QuickLaunch" Tag="L" Content="LAUNCH PROFILE" Style="{StaticResource Primary}"/><Button Name="QuickDemo" Tag="D" Content="QUICK DEMO"/></WrapPanel>
+         <TextBlock Style="{StaticResource Note}" Text="Adjust profiles on screen 2. Launching uses the settings shown there, including unsaved edits."/>
+        </StackPanel>
+       </HeaderedContentControl>
+       <HeaderedContentControl Grid.Column="2" Style="{StaticResource FrameDouble}" Header="STREAMING DESK" BorderBrush="{DynamicResource C2}">
+        <StackPanel>
+         <StackPanel Orientation="Horizontal">
+          <TextBlock Name="SessionTitle" Text="READY." FontSize="46" TextWrapping="NoWrap"/>
+          <Rectangle Name="ReadyCursor" Width="20" Height="32" Margin="10,4,0,0" VerticalAlignment="Center" Fill="{DynamicResource Fg}">
+           <Rectangle.Triggers><EventTrigger RoutedEvent="FrameworkElement.Loaded"><BeginStoryboard><Storyboard><DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Duration="0:0:1.06" RepeatBehavior="Forever"><DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="1"/><DiscreteDoubleKeyFrame KeyTime="0:0:0.53" Value="0"/></DoubleAnimationUsingKeyFrames></Storyboard></BeginStoryboard></EventTrigger></Rectangle.Triggers>
+          </Rectangle>
+         </StackPanel>
+         <TextBlock Name="SessionDetail" Text="Load the receiver, choose a profile, and bring your world to the Apple II." Margin="0,8,0,14"/>
+         <UniformGrid Columns="3">
+          <StackPanel Margin="0,0,16,0"><TextBlock Text="VIDEO" Foreground="{DynamicResource Dim}"/><TextBlock Name="VideoSummary"/></StackPanel>
+          <StackPanel Margin="0,0,16,0"><TextBlock Text="LINK" Foreground="{DynamicResource Dim}"/><TextBlock Name="LinkSummary"/></StackPanel>
+          <StackPanel><TextBlock Text="CAPTURE" Foreground="{DynamicResource Dim}"/><TextBlock Name="SourceSummary"/></StackPanel>
+         </UniformGrid>
+        </StackPanel>
+       </HeaderedContentControl>
+      </Grid>
+      <HeaderedContentControl Style="{StaticResource Frame}" Header="DISK &amp; SERIAL HANDOFF" BorderBrush="{DynamicResource C3}" Margin="0,12,0,0">
+       <StackPanel>
+        <TextBlock Text="Open ADTPro to load the receiver. Once the IIe says WAITING FOR STREAM, hand the port to your profile." Margin="0,0,0,10"/>
+        <WrapPanel><Button Name="LaunchAdt" Tag="A" Content="OPEN ADTPRO"/><Button Name="HandoffStream" Tag="H" Content="CLOSE ADTPRO &amp; STREAM"/><Button Name="HandoffAdt" Tag="B" Content="STOP STREAM &amp; OPEN ADTPRO"/></WrapPanel>
+        <TextBlock Style="{StaticResource Note}" Text="Finish disk transfers before closing ADTPro. For the return trip, press Esc on the IIe to restore 19200 baud. Choose Serial and the port in ADTPro itself."/>
+       </StackPanel>
+      </HeaderedContentControl>
+      <HeaderedContentControl Style="{StaticResource Frame}" Header="VSDRIVE DEPLOY" BorderBrush="{DynamicResource C5}" Margin="0,12,0,0">
+       <StackPanel>
+        <TextBlock Text="Put this release's receivers into the VSDRIVE image ADTPro serves, so the IIe can BRUN them after a SpeediBoot. Close ADTPro first." Margin="0,0,0,10"/>
+        <Grid>
+         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="16"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+         <StackPanel><TextBlock Text="VSDRIVE IMAGE (.PO)"/><TextBox Name="VsImageField"/></StackPanel>
+         <StackPanel Grid.Column="2"><TextBlock Text="RECEIVERS"/><ComboBox Name="VsSetField" MinWidth="220"/></StackPanel>
+        </Grid>
+        <WrapPanel Margin="0,10,0,0"><Button Name="VsDeploy" Tag="V" Content="DEPLOY TO VSDRIVE" Style="{StaticResource Primary}"/><Button Name="VsBrowse" Tag="I" Content="CHOOSE IMAGE"/><Button Name="VsRestore" Tag="R" Content="RESTORE LAST BACKUP"/></WrapPanel>
+        <TextBlock Style="{StaticResource Note}" Text="The image is backed up first and replaced only after every file reads back from the first directory block, where SpeediBoot looks. Then: BRUN A2MC.RX,S1,D2. Backups go to build\&lt;version&gt;\launcher\vsdrive-backups."/>
+       </StackPanel>
+      </HeaderedContentControl>
+      <HeaderedContentControl Style="{StaticResource Frame}" Header="SESSION JOURNAL" BorderBrush="{DynamicResource C4}" Margin="0,12,0,0">
+       <TextBox Name="LiveLog" Style="{StaticResource Log}" Height="190" Text="No session started. Launches and diagnostics will appear here."/>
+      </HeaderedContentControl>
+     </StackPanel></ScrollViewer>
+    </TabItem>
+
+    <TabItem Header="2 OPTIONS">
+     <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="0,0,10,0">
+      <Grid>
+       <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+       <HeaderedContentControl Style="{StaticResource FrameDouble}" Header="PROFILE &amp; LAUNCH" BorderBrush="{DynamicResource C2}">
+        <StackPanel>
+         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="230"/></Grid.ColumnDefinitions><TextBlock Text="PROFILE NAME" VerticalAlignment="Center"/><Line Grid.Column="1" Style="{StaticResource Leader}"/><TextBox Grid.Column="2" Name="NameField"/></Grid>
+         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="230"/></Grid.ColumnDefinitions><TextBlock Text="SOURCE" VerticalAlignment="Center"/><Line Grid.Column="1" Style="{StaticResource Leader}"/><ComboBox Grid.Column="2" Name="SourceField"/></Grid>
+         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="230"/></Grid.ColumnDefinitions><TextBlock Text="SERIAL PORT" VerticalAlignment="Center"/><Line Grid.Column="1" Style="{StaticResource Leader}"/><TextBox Grid.Column="2" Name="PortField"/></Grid>
+         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="230"/></Grid.ColumnDefinitions><TextBlock Text="BAUD (MATCH THE IIe)" VerticalAlignment="Center"/><Line Grid.Column="1" Style="{StaticResource Leader}"/><ComboBox Grid.Column="2" Name="BaudField"/></Grid>
+         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="230"/></Grid.ColumnDefinitions><TextBlock Text="FRAMES PER SECOND" VerticalAlignment="Center"/><Line Grid.Column="1" Style="{StaticResource Leader}"/><TextBox Grid.Column="2" Name="FpsField"/></Grid>
+         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="230"/></Grid.ColumnDefinitions><TextBlock Text="STOP AFTER SECONDS" VerticalAlignment="Center"/><Line Grid.Column="1" Style="{StaticResource Leader}"/><TextBox Grid.Column="2" Name="DurationField"/></Grid>
+         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="230"/></Grid.ColumnDefinitions><TextBlock Text="WINDOW TITLE" VerticalAlignment="Center"/><Line Grid.Column="1" Style="{StaticResource Leader}"/><TextBox Grid.Column="2" Name="WindowTitleField"/></Grid>
+         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="230"/></Grid.ColumnDefinitions><TextBlock Text="IMAGE PATH" VerticalAlignment="Center"/><Line Grid.Column="1" Style="{StaticResource Leader}"/><DockPanel Grid.Column="2"><Button Name="BrowseImage" Content="..." DockPanel.Dock="Right" Margin="6,0,0,8" Padding="8,2"/><TextBox Name="ImageField"/></DockPanel></Grid>
+         <Button Name="DetectWindow" Tag="U" Content="USE RUNNING MINECRAFT WINDOW" HorizontalAlignment="Left" Margin="0,8,0,8"/>
+         <TextBlock Style="{StaticResource Note}" Text="0 seconds = unlimited. Changing baud suggests 10 fps at 115200 or 1.5 fps at 19200."/>
+        </StackPanel>
+       </HeaderedContentControl>
+       <HeaderedContentControl Grid.Column="2" Style="{StaticResource Frame}" Header="IMAGE &amp; INPUT" BorderBrush="{DynamicResource C1}">
+        <StackPanel>
+         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="170"/></Grid.ColumnDefinitions><TextBlock Text="VIDEO MODE" VerticalAlignment="Center"/><Line Grid.Column="1" Style="{StaticResource Leader}"/><ComboBox Grid.Column="2" Name="ModeField"/></Grid>
+         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="170"/></Grid.ColumnDefinitions><TextBlock Text="FIT" VerticalAlignment="Center"/><Line Grid.Column="1" Style="{StaticResource Leader}"/><ComboBox Grid.Column="2" Name="FitField"/></Grid>
+         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="170"/></Grid.ColumnDefinitions><TextBlock Text="AUX ROTATION" VerticalAlignment="Center"/><Line Grid.Column="1" Style="{StaticResource Leader}"/><ComboBox Grid.Column="2" Name="AuxRotateField"/></Grid>
+         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="170"/></Grid.ColumnDefinitions><TextBlock Text="SATURATION (0-3)" VerticalAlignment="Center"/><Line Grid.Column="1" Style="{StaticResource Leader}"/><TextBox Grid.Column="2" Name="SaturationField"/></Grid>
+         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="170"/></Grid.ColumnDefinitions><TextBlock Text="CONTRAST (0.1-3)" VerticalAlignment="Center"/><Line Grid.Column="1" Style="{StaticResource Leader}"/><TextBox Grid.Column="2" Name="ContrastField"/></Grid>
+         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="170"/></Grid.ColumnDefinitions><TextBlock Text="GAMMA (0.1-3)" VerticalAlignment="Center"/><Line Grid.Column="1" Style="{StaticResource Leader}"/><TextBox Grid.Column="2" Name="GammaField"/></Grid>
+         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="170"/></Grid.ColumnDefinitions><TextBlock Text="LOOK STEP (1-500)" VerticalAlignment="Center"/><Line Grid.Column="1" Style="{StaticResource Leader}"/><TextBox Grid.Column="2" Name="LookStepField"/></Grid>
+         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="170"/></Grid.ColumnDefinitions><TextBlock Text="KEY HOLD MS (1-2000)" VerticalAlignment="Center"/><Line Grid.Column="1" Style="{StaticResource Leader}"/><TextBox Grid.Column="2" Name="HoldMsField"/></Grid>
+         <WrapPanel Margin="0,6,0,0"><CheckBox Name="DitherField" Content="DITHER"/><CheckBox Name="NoInputField" Content="DISABLE INPUT"/><CheckBox Name="NoSoundsField" Content="DISABLE SOUNDS"/></WrapPanel>
+        </StackPanel>
+       </HeaderedContentControl>
+      </Grid>
+      <WrapPanel Margin="0,16,0,0"><Button Name="SaveProfile" Tag="S" Content="SAVE PROFILE" Style="{StaticResource Primary}"/><Button Name="NewProfile" Tag="N" Content="NEW"/><Button Name="DeleteProfile" Tag="X" Content="DELETE"/><Button Name="ImportProfiles" Tag="I" Content="IMPORT"/><Button Name="ExportProfiles" Tag="E" Content="EXPORT"/><Button Name="Preview" Tag="V" Content="PREVIEW LAUNCH"/></WrapPanel>
+      <Grid>
+       <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+       <HeaderedContentControl Style="{StaticResource Frame}" Header="MONITOR" BorderBrush="{DynamicResource C5}">
+        <StackPanel>
+         <TextBlock Style="{StaticResource Note}" Margin="0,0,0,6" Text="Match your Apple's display. Applies to every screen and is saved with the launcher, not per profile. M changes it from anywhere."/>
+         <RadioButton Name="MonitorGreen" GroupName="Monitor"><DockPanel><Border DockPanel.Dock="Right" Width="150" Background="#060C06" BorderBrush="#41FF5F" BorderThickness="2"><TextBlock Text="READY." Foreground="#41FF5F" HorizontalAlignment="Center"/></Border><TextBlock Text="GREEN PHOSPHOR" VerticalAlignment="Center"/></DockPanel></RadioButton>
+         <RadioButton Name="MonitorAmber" GroupName="Monitor"><DockPanel><Border DockPanel.Dock="Right" Width="150" Background="#0D0904" BorderBrush="#FFB733" BorderThickness="2"><TextBlock Text="READY." Foreground="#FFB733" HorizontalAlignment="Center"/></Border><TextBlock Text="AMBER PHOSPHOR" VerticalAlignment="Center"/></DockPanel></RadioButton>
+         <RadioButton Name="MonitorWhite" GroupName="Monitor"><DockPanel><Border DockPanel.Dock="Right" Width="150" Background="#0A0A0A" BorderBrush="#ECEDE6" BorderThickness="2"><TextBlock Text="READY." Foreground="#ECEDE6" HorizontalAlignment="Center"/></Border><TextBlock Text="WHITE PHOSPHOR" VerticalAlignment="Center"/></DockPanel></RadioButton>
+         <RadioButton Name="MonitorColor" GroupName="Monitor"><DockPanel><Border DockPanel.Dock="Right" Width="150" Height="26" BorderBrush="#808080" BorderThickness="2"><UniformGrid Columns="16"><Rectangle Fill="#000000"/><Rectangle Fill="#9D1B6C"/><Rectangle Fill="#402CB8"/><Rectangle Fill="#D643FF"/><Rectangle Fill="#007A3D"/><Rectangle Fill="#808080"/><Rectangle Fill="#2F95FF"/><Rectangle Fill="#BFD7FF"/><Rectangle Fill="#6F4F1F"/><Rectangle Fill="#FF6A00"/><Rectangle Fill="#C0C0C0"/><Rectangle Fill="#FFA0D0"/><Rectangle Fill="#2FD141"/><Rectangle Fill="#FFF04A"/><Rectangle Fill="#72FFB5"/><Rectangle Fill="#FFFFFF"/></UniformGrid></Border><TextBlock Text="APPLE II COLOR / 16 COLORS" VerticalAlignment="Center"/></DockPanel></RadioButton>
+         <TextBlock Style="{StaticResource Note}" Text="16 colors is for a color monitor, TV or RGB card. It uses the same lo-res palette the streamer sends to the IIe."/>
+         <CheckBox Name="CrtToggle" Content="SCANLINES &amp; GLOW"/>
+        </StackPanel>
+       </HeaderedContentControl>
+       <HeaderedContentControl Grid.Column="2" Style="{StaticResource Frame}" Header="LAUNCH PREVIEW" BorderBrush="{DynamicResource C4}">
+        <TextBox Name="CommandPreview" Style="{StaticResource Log}" MinHeight="240" Text="Preview checks your options without launching or opening a serial port."/>
+       </HeaderedContentControl>
+      </Grid>
+     </StackPanel></ScrollViewer>
+    </TabItem>
+
+    <TabItem Header="3 DIAGNOSTICS">
+     <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="0,0,10,0">
+      <HeaderedContentControl Style="{StaticResource FrameDouble}" Header="INSPECT THE BRIDGE" BorderBrush="{DynamicResource C2}">
+       <StackPanel>
+        <TextBlock Text="Check tools, release integrity, Windows port names, ADTPro processes and Minecraft windows. The compression check exercises the streamer without hardware." Margin="0,0,0,12"/>
+        <WrapPanel><Button Name="RunDiagnostics" Tag="R" Content="RUN DIAGNOSTICS" Style="{StaticResource Primary}"/><Button Name="RunOffline" Tag="C" Content="CHECK COMPRESSION"/><Button Name="RefreshPorts" Tag="P" Content="REFRESH PORT LIST"/></WrapPanel>
+        <TextBlock Name="DiagnosticsPorts" Margin="0,4,0,8"/>
+        <TextBlock Style="{StaticResource Note}" Text="Results appear in the session journal on screen 1. Port names do not establish ownership; close other serial programs yourself. Diagnostics never open a serial port or write a disk image."/>
+       </StackPanel>
+      </HeaderedContentControl>
+      <HeaderedContentControl Style="{StaticResource Frame}" Header="FILES &amp; GUIDES" BorderBrush="{DynamicResource C1}" Margin="0,12,0,0">
+       <WrapPanel><Button Name="OpenLogs" Tag="L" Content="OPEN SESSION FOLDER"/><Button Name="OpenBuild" Tag="F" Content="OPEN RELEASE FILES"/><Button Name="OpenGuide" Tag="G" Content="OPERATING GUIDE"/></WrapPanel>
+      </HeaderedContentControl>
+      <HeaderedContentControl Style="{StaticResource Frame}" Header="BEFORE YOU LAUNCH" BorderBrush="{DynamicResource C3}" Margin="0,12,0,0">
+       <StackPanel>
+        <TextBlock Text="1. Load this release's A2MC.RX and check its version banner.&#10;2. Match the SSC slot and baud; wait for WAITING FOR STREAM.&#10;3. Finish transfers and close ADTPro, then launch a demo or Minecraft.&#10;4. Click into Minecraft for input. If the image freezes, check the journal and allow the next keyframe."/>
+        <TextBlock Style="{StaticResource Note}" Margin="0,10,0,0" Text="Hardware validation is separate. A successful PC check does not verify the receiver or cable."/>
+       </StackPanel>
+      </HeaderedContentControl>
+     </StackPanel></ScrollViewer>
+    </TabItem>
+
+    <TabItem Header="4 HISTORY">
+     <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="0,0,10,0">
+      <HeaderedContentControl Style="{StaticResource FrameDouble}" Header="SESSIONS" BorderBrush="{DynamicResource C2}">
+       <StackPanel>
+        <TextBlock Style="{StaticResource Note}" Margin="0,0,0,8" Text="Previous launches, settings, outcomes and captured logs. Select a session to inspect it."/>
+        <ListBox Name="HistoryList" Height="230" DisplayMemberPath="Label"/>
+        <WrapPanel Margin="0,12,0,0"><Button Name="RestoreSession" Tag="U" Content="USE SESSION SETTINGS"/><Button Name="ExportHistory" Tag="E" Content="EXPORT HISTORY"/></WrapPanel>
+       </StackPanel>
+      </HeaderedContentControl>
+      <HeaderedContentControl Style="{StaticResource Frame}" Header="SESSION DETAIL" BorderBrush="{DynamicResource C4}" Margin="0,12,0,0">
+       <TextBox Name="HistoryDetail" Style="{StaticResource Log}" Height="300" Text="Your first session will be recorded here. Logs are kept locally under this release's build folder."/>
+      </HeaderedContentControl>
+     </StackPanel></ScrollViewer>
+    </TabItem>
+
+    <TabItem Header="5 HI-RES" Name="HiTab">
+     <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="0,0,10,0">
+      <HeaderedContentControl Style="{StaticResource FrameDouble}" Header="HI-RES GALLERY / INSPIRED BY vnIIc" BorderBrush="{DynamicResource C2}">
+       <StackPanel>
+        <WrapPanel><Button Name="HiPreview" Tag="P" Content="START PREVIEW" Style="{StaticResource Primary}"/><Button Name="HiStream" Tag="S" Content="START HI-RES STREAM"/><Button Name="HiStop" Tag="X" Content="STOP / RELEASE PORT"/><Button Name="HiSave" Tag="V" Content="SAVE PROFILE SETTINGS"/></WrapPanel>
+        <Grid Margin="0,6,0,0">
+         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="300"/></Grid.ColumnDefinitions>
+         <Border BorderBrush="{DynamicResource Dim}" BorderThickness="2" Margin="0,0,18,8" Height="250" Background="#000000">
+          <Grid><TextBlock Name="HiEmpty" Text="Your converted image appears here.&#10;Start preview to explore without serial." Foreground="#C0C0C0" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"/><Image Name="HiPicture" Stretch="Uniform" RenderOptions.BitmapScalingMode="NearestNeighbor"/></Grid>
+         </Border>
+         <StackPanel Grid.Column="1">
+          <TextBlock Text="FRAME JOURNAL" Foreground="{DynamicResource Dim}"/>
+          <TextBlock Name="HiStatus" Text="No Hi-Res session yet. Serial is closed." Margin="0,4,0,10"/>
+          <TextBlock Style="{StaticResource Note}" Text="280 x 192 HGR, 140 color samples across. Artifact-color preview is approximate. Packed pages send only what changed; a raw page takes 0.7 s at 115200 baud and 4.3 s at 19200."/>
+          <Button Name="HiExport" Tag="E" Content="SAVE HGR + PNG FRAME" Margin="0,12,0,0" HorizontalAlignment="Left"/>
+         </StackPanel>
+        </Grid>
+       </StackPanel>
+      </HeaderedContentControl>
+      <HeaderedContentControl Style="{StaticResource Frame}" Header="SOURCE &amp; LINK" BorderBrush="{DynamicResource C1}" Margin="0,12,0,0">
+       <StackPanel>
+        <UniformGrid Columns="3"><StackPanel Margin="0,0,16,0"><TextBlock Text="SOURCE"/><ComboBox Name="HiSourceField"/></StackPanel><StackPanel Margin="0,0,16,0"><TextBlock Text="PORT"/><TextBox Name="HiPortField"/></StackPanel><StackPanel><TextBlock Text="BAUD"/><ComboBox Name="HiBaudField"/></StackPanel></UniformGrid>
+        <UniformGrid Columns="2"><StackPanel Margin="0,0,16,0"><TextBlock Text="WINDOW TITLE CONTAINS"/><ComboBox Name="HiWindowTitleField" IsEditable="True"/></StackPanel><StackPanel><TextBlock Text="IMAGE PATH"/><TextBox Name="HiImageField"/></StackPanel></UniformGrid>
+        <WrapPanel><Button Name="HiWindows" Tag="W" Content="REFRESH WINDOWS"/><Button Name="HiBrowse" Tag="I" Content="CHOOSE IMAGE"/></WrapPanel>
+        <UniformGrid Columns="5"><StackPanel Margin="0,0,12,0"><TextBlock Text="SSC SLOT"/><ComboBox Name="HiSlotField"/></StackPanel><StackPanel Margin="0,0,12,0"><TextBlock Text="DITHER 0-1"/><TextBox Name="HiDitherField"/></StackPanel><StackPanel Margin="0,0,12,0"><TextBlock Text="TARGET FPS"/><TextBox Name="HiFpsField"/></StackPanel><StackPanel Margin="0,0,12,0"><TextBlock Text="FIT"/><ComboBox Name="HiFitField"/></StackPanel><StackPanel><TextBlock Text="SECONDS / 0=ALL"/><TextBox Name="HiDurationField"/></StackPanel></UniformGrid>
+        <UniformGrid Columns="5"><StackPanel Margin="0,0,12,0"><TextBlock Text="PAGES"/><ComboBox Name="HiPagesField"/></StackPanel><StackPanel Margin="0,0,12,0"><TextBlock Text="KEYS FROM IIE"/><ComboBox Name="HiKeysField"/></StackPanel></UniformGrid>
+        <TextBlock Style="{StaticResource Note}" Text="Changes apply on the next start. Stop preview before streaming. Window capture reads the visible screen; keep the chosen window uncovered. Desktop captures the primary display. Keys: Log writes each IIe key in the journal; Minecraft plays them into the captured window (Window source only, while it is in front) with the look step and hold time from 2 Options. Raw sends every page whole, as before 7.14.0. No sound in this mode."/>
+       </StackPanel>
+      </HeaderedContentControl>
+      <HeaderedContentControl Style="{StaticResource Frame}" Header="LOAD &amp; CONNECT" BorderBrush="{DynamicResource C3}" Margin="0,12,0,0">
+       <StackPanel>
+        <TextBlock Margin="0,0,0,10" Text="Option 1: Boot A2HR.DSK and BRUN A2HR.RX; select SSC slot and baud on the IIe.&#10;Option 2: Bootstrap into RAM from BASIC. With disk transfers finished, close ADTPro. Type IN# followed by the selected slot, Return, then Ctrl+A, 14B, Return on the IIe (9600 baud). Then choose Upload receiver."/>
+        <WrapPanel><Button Name="HiBootstrap" Tag="U" Content="UPLOAD RECEIVER TO RAM"/><Button Name="HiFromAdt" Tag="H" Content="CLOSE ADTPRO &amp; STREAM HI-RES"/><Button Name="HiToAdt" Tag="B" Content="STOP &amp; OPEN ADTPRO"/><Button Name="HiGuide" Tag="G" Content="HI-RES GUIDE"/></WrapPanel>
+        <TextBlock Style="{StaticResource Note}" Text="Wait for A2HR RX and WAITING FOR HI-RES before starting. A2MC and the original vnIIc receiver are incompatible with this mode. Esc on the IIe restores text and 19200 baud. A receiver older than 7.14.0 is still served, with raw pages and no keys. After a forced stop, press Esc and restart the receiver."/>
+       </StackPanel>
+      </HeaderedContentControl>
+     </StackPanel></ScrollViewer>
+    </TabItem>
+
+    <TabItem Header="6 Z80 / CP/M" Name="CpmTab">
+     <DockPanel>
+      <WrapPanel DockPanel.Dock="Top"><Button Name="CpmSave" Tag="V" Content="SAVE PROFILE"/><Button Name="CpmStop" Tag="X" Content="STOP / RELEASE PORT"/><Button Name="CpmGuide" Tag="G" Content="SOFTCARD GUIDE"/></WrapPanel>
+      <HeaderedContentControl DockPanel.Dock="Bottom" Style="{StaticResource Frame}" Header="WORKBENCH JOURNAL" BorderBrush="{DynamicResource C4}" Margin="0,8,0,0">
+       <TextBox Name="CpmLog" Style="{StaticResource Log}" Height="150" Text="Offline tools are ready. No SoftCard hardware has been tested by this release."/>
+      </HeaderedContentControl>
+      <TabControl Name="CpmPages">
+       <TabItem Header="LIBRARY"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="0,0,10,0">
+        <HeaderedContentControl Style="{StaticResource FrameDouble}" Header="THE LIBRARY / PREMIUM SOFTCARD IIe" BorderBrush="{DynamicResource C2}">
+         <StackPanel>
+          <TextBlock Margin="0,0,0,10" Text="Keep boot disks, applications and their instructions together. The SoftCard lives in the auxiliary slot; SSC settings belong to your CP/M drivers."/>
+          <ComboBox Name="CpmLibraryList" DisplayMemberPath="CpmTitle"/>
+          <UniformGrid Columns="2"><StackPanel Margin="0,0,16,0"><TextBlock Text="LIBRARY TITLE"/><TextBox Name="CpmTitleField"/></StackPanel><StackPanel><TextBlock Text="CP/M VERSION / DISK VARIANT"/><TextBox Name="CpmVersionField"/></StackPanel></UniformGrid>
+          <TextBlock Text="BOOT / APPLICATION DISK IMAGE"/><TextBox Name="CpmDiskField"/>
+          <WrapPanel><Button Name="CpmBrowseDisk" Tag="D" Content="CHOOSE DISK"/><Button Name="CpmSaveLibrary" Tag="L" Content="SAVE LIBRARY ENTRY"/><Button Name="CpmRemoveLibrary" Tag="R" Content="REMOVE ENTRY"/><Button Name="CpmDiskFolder" Tag="F" Content="OPEN DISK FOLDER"/></WrapPanel>
+          <TextBlock Text="APPLICATION COMMAND (RECORDED; SENT ONLY WITH SEND COMMAND)"/><TextBox Name="CpmCommandField"/>
+          <TextBlock Text="BOOT, DRIVER AND APPLICATION NOTES"/><TextBox Name="CpmNotesField" TextWrapping="Wrap" MinHeight="52"/>
+          <WrapPanel><Button Name="CpmPrepare" Tag="P" Content="PREPARE BOOT PLAN" Style="{StaticResource Primary}"/><Button Name="CpmToAdt" Tag="A" Content="RELEASE SESSION &amp; OPEN ADTPRO"/></WrapPanel>
+          <TextBlock Style="{StaticResource Note}" Text="Booting happens on the Apple. Use a Premium IIe-compatible CP/M system disk. The boot plan records the image hash and your instructions; it does not alter or transfer the image. Choose the disk and port in ADTPro itself."/>
+         </StackPanel>
+        </HeaderedContentControl>
+       </StackPanel></ScrollViewer></TabItem>
+       <TabItem Header="WORKSHOP"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="0,0,10,0">
+        <HeaderedContentControl Style="{StaticResource FrameDouble}" Header="ASSEMBLE / EXAMINE / RUN" BorderBrush="{DynamicResource C2}">
+         <StackPanel>
+          <TextBlock Text="SOURCE FILE"/><TextBox Name="CpmSourceField"/>
+          <WrapPanel><Button Name="CpmBrowseSource" Tag="O" Content="CHOOSE SOURCE"/><Button Name="CpmExample" Tag="E" Content="NEW MODULE EXAMPLE"/><Button Name="CpmHello" Tag="H" Content="NEW CP/M EXAMPLE"/><Button Name="CpmEdit" Tag="T" Content="EDIT SOURCE"/></WrapPanel>
+          <UniformGrid Columns="2"><StackPanel Margin="0,0,16,0"><TextBlock Text="BUILD TARGET"/><ComboBox Name="CpmTargetField"/></StackPanel><StackPanel><TextBlock Text="VERIFIED BUILD BINARY"/><TextBox Name="CpmBinaryField"/></StackPanel></UniformGrid>
+          <WrapPanel><Button Name="CpmBuild" Tag="A" Content="ASSEMBLE" Style="{StaticResource Primary}"/><Button Name="CpmEmulate" Tag="U" Content="TEST MODULE IN EMULATOR"/><Button Name="CpmBrowseBinary" Tag="B" Content="CHOOSE PREVIOUS BUILD"/><Button Name="CpmBuildFolder" Tag="F" Content="OPEN BUILD / LISTING"/></WrapPanel>
+          <TextBlock Style="{StaticResource Note}" Text="COM: ORG 0x0100, runs under CP/M from disk. Module: ORG 0x4000, at most 4096 bytes, preserve SP and RET with result in HL. The emulator runs the Z80 with a BDOS test shim; it does not model the Apple II bus or serial hardware."/>
+         </StackPanel>
+        </HeaderedContentControl>
+        <HeaderedContentControl Style="{StaticResource Frame}" Header="ON THE APPLE / REQUIRES A2Z R" BorderBrush="{DynamicResource C1}" Margin="0,12,0,0">
+         <StackPanel>
+          <WrapPanel><Button Name="CpmProbe" Tag="D" Content="RUN HARDWARE DIAGNOSTICS"/><Button Name="CpmUpload" Tag="L" Content="UPLOAD &amp; VERIFY MODULE"/><Button Name="CpmRun" Tag="R" Content="RUN UPLOADED MODULE"/><Button Name="CpmQuit" Tag="Q" Content="EXIT HELPER TO CP/M"/></WrapPanel>
+          <UniformGrid Columns="2"><StackPanel Margin="0,0,16,0"><TextBlock Text="MEMORY OFFSET FROM 4000H (DECIMAL)"/><TextBox Name="CpmOffsetField"/></StackPanel><StackPanel><TextBlock Text="BYTES TO INSPECT (1-32)"/><TextBox Name="CpmCountField"/></StackPanel></UniformGrid>
+          <Button Name="CpmInspect" Tag="I" Content="INSPECT UPLOADED MEMORY" HorizontalAlignment="Left"/>
+          <TextBlock Style="{StaticResource Note}" Text="Run executes your uploaded code on the Z80. A module that fails to return needs an Apple-side reset. Diagnostics test 256 private bytes and a BDOS round trip, not all 64 KB or bank switching. See the journal for results and saved session paths."/>
+         </StackPanel>
+        </HeaderedContentControl>
+       </StackPanel></ScrollViewer></TabItem>
+       <TabItem Header="SERIAL DESK"><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="0,0,10,0">
+        <HeaderedContentControl Style="{StaticResource FrameDouble}" Header="THE SERIAL DESK" BorderBrush="{DynamicResource C2}">
+         <StackPanel>
+          <UniformGrid Columns="3"><StackPanel Margin="0,0,16,0"><TextBlock Text="PORT"/><TextBox Name="CpmPortField"/></StackPanel><StackPanel Margin="0,0,16,0"><TextBlock Text="BAUD / 8N1"/><ComboBox Name="CpmBaudField"/></StackPanel><StackPanel><TextBlock Text="FLOW CONTROL"/><ComboBox Name="CpmHandshakeField"/></StackPanel></UniformGrid>
+          <TextBlock Margin="0,0,0,10" Text="Configure the CP/M SSC driver first (CONFIGIO on compatible Microsoft disks). Match baud and flow control. For A2Z R, route RDR: and PUN: to the SSC; leave CON: on the Apple. For a remote CP/M prompt, CON: must instead be routed to serial."/>
+          <WrapPanel><Button Name="CpmTerminal" Tag="C" Content="CONNECT TERMINAL"/><Button Name="CpmFromAdt" Tag="H" Content="CLOSE ADTPRO &amp; CONNECT"/><Button Name="CpmSendCommand" Tag="S" Content="SEND SAVED COMMAND"/><Button Name="CpmCtrlC" Tag="K" Content="SEND CTRL+C"/></WrapPanel>
+          <DockPanel><Button Name="CpmSend" Tag="N" Content="SEND LINE" DockPanel.Dock="Right" Margin="10,0,0,8"/><TextBox Name="CpmTerminalInput" ToolTip="Plain ASCII line; Return is added by Send line."/></DockPanel>
+          <TextBlock Style="{StaticResource Note}" Text="Terminal output appears in the journal below. This is a plain text terminal, not a VT100 emulator. Stop it before using helper actions or sending HEX."/>
+         </StackPanel>
+        </HeaderedContentControl>
+        <HeaderedContentControl Style="{StaticResource Frame}" Header="DISKLESS SOFTCARD PROBE / NO CP/M DISK NEEDED" BorderBrush="{DynamicResource C3}" Margin="0,12,0,0">
+         <StackPanel>
+          <TextBlock Margin="0,0,0,8" Text="Close ADTPro. At the Apple's ] prompt type IN# and the SSC slot, Return, then Ctrl+A, 14B, Return (9600 baud). Then probe the SoftCard. It loads a probe into RAM at $6000 through the monitor, tests the card's memory windows, Z80 start, hold, speed and request handshake, and saves a report. Uses the port above at 9600 whatever baud is selected."/>
+          <UniformGrid Columns="3"><StackPanel Margin="0,0,16,0"><TextBlock Text="SSC SLOT"/><ComboBox Name="CpmSlotField"/></StackPanel></UniformGrid>
+          <WrapPanel><Button Name="CpmCardProbe" Tag="R" Content="PROBE SOFTCARD (RAM, NO DISK)" Style="{StaticResource Primary}"/></WrapPanel>
+          <TextBlock Style="{StaticResource Note}" Text="Power-cycle the Apple afterwards: the probe overwrites aux RAM and the language card and leaves the Z80 in reset."/>
+         </StackPanel>
+        </HeaderedContentControl>
+        <HeaderedContentControl Style="{StaticResource Frame}" Header="BOOT CP/M FROM THE PC / NO DISK DRIVE NEEDED" BorderBrush="{DynamicResource C5}" Margin="0,12,0,0">
+         <StackPanel>
+          <TextBlock Margin="0,0,0,8" Text="Boots Premium SoftCard IIe CP/M 2.26B from the disk image chosen on the Library page (drive A:), with the port and SSC slot above. Close ADTPro, then at the ] prompt type IN# and the slot, Return, Ctrl+A, 14B, Return. The launcher loads a small bootstrap through the monitor and then serves every CP/M disk read and write until you stop it."/>
+          <TextBlock Text="DRIVE B: IMAGE (OPTIONAL)"/><TextBox Name="CpmDiskBField"/>
+          <UniformGrid Columns="3"><StackPanel Margin="0,0,16,0"><TextBlock Text="DISK LINK BAUD"/><ComboBox Name="CpmBootBaudField"/></StackPanel><StackPanel Margin="0,0,16,0"><TextBlock Text="CP/M WRITES"/><ComboBox Name="CpmWritesField"/></StackPanel></UniformGrid>
+          <WrapPanel Margin="0,10,0,0"><Button Name="CpmBootPc" Tag="B" Content="BOOT CP/M FROM PC" Style="{StaticResource Primary}"/><Button Name="CpmBrowseDiskB" Tag="D" Content="CHOOSE B: DISK"/></WrapPanel>
+          <TextBlock Style="{StaticResource Note}" Text="Writes go straight to the images; each is backed up first to build\&lt;version&gt;\launcher\cpm-backups. While CP/M runs, the SSC carries the disks: CP/M sees no card in its slot. Stop / release port ends the session; the Apple then reports disk errors."/>
+         </StackPanel>
+        </HeaderedContentControl>
+        <HeaderedContentControl Style="{StaticResource Frame}" Header="FIRST-TIME HELPER INSTALLATION / PIP + LOAD" BorderBrush="{DynamicResource C1}" Margin="0,12,0,0">
+         <StackPanel>
+          <TextBlock Margin="0,0,0,8" Text="On the Apple, configure RDR: for SSC input, then run PIP A2Z.HEX=RDR:. Once PIP is waiting, select this release's A2Z.HEX and send it. When it finishes, run LOAD A2Z. Then A2Z runs local diagnostics; A2Z R starts the remote helper."/>
+          <TextBox Name="CpmHexField"/>
+          <WrapPanel><Button Name="CpmBrowseHex" Tag="O" Content="CHOOSE HEX"/><Button Name="CpmSendHex" Tag="P" Content="SEND HEX TO WAITING PIP"/><Button Name="CpmHelperHex" Tag="U" Content="USE THIS RELEASE'S HELPER"/></WrapPanel>
+          <TextBlock Style="{StaticResource Note}" Text="HEX sends are paced and unacknowledged: verify LOAD's result on the Apple. Run uses a checksummed, read-back-verified RAM module instead. Closing the PC port does not exit A2Z R; use Exit helper or restart on the Apple after an interrupted packet."/>
+         </StackPanel>
+        </HeaderedContentControl>
+       </StackPanel></ScrollViewer></TabItem>
+      </TabControl>
+     </DockPanel>
+    </TabItem>
+
+    <TabItem Header="7 CASSETTE" Name="TapeTab">
+     <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="0,0,10,0">
+      <Grid>
+       <Grid.ColumnDefinitions><ColumnDefinition Width="5*"/><ColumnDefinition Width="24"/><ColumnDefinition Width="6*"/></Grid.ColumnDefinitions>
+       <StackPanel>
+        <HeaderedContentControl Style="{StaticResource Frame}" Header="TAPE SHELF" BorderBrush="{DynamicResource C1}">
+         <ListBox Name="TapeLibraryList" MaxHeight="220" DisplayMemberPath="Title"/>
+        </HeaderedContentControl>
+        <HeaderedContentControl Style="{StaticResource Frame}" Header="TAPE DETAILS" BorderBrush="{DynamicResource C4}" Margin="0,12,0,0">
+         <StackPanel>
+          <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="250"/></Grid.ColumnDefinitions><TextBlock Text="TITLE" VerticalAlignment="Center"/><Line Grid.Column="1" Style="{StaticResource Leader}"/><TextBox Grid.Column="2" Name="TapeTitleField"/></Grid>
+          <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="250"/></Grid.ColumnDefinitions><TextBlock Text="ON THE APPLE" VerticalAlignment="Center"/><Line Grid.Column="1" Style="{StaticResource Leader}"/><TextBox Grid.Column="2" Name="TapeLoadField"/></Grid>
+          <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="250"/></Grid.ColumnDefinitions><TextBlock Text="NOTES" VerticalAlignment="Center"/><Line Grid.Column="1" Style="{StaticResource Leader}"/><TextBox Grid.Column="2" Name="TapeNotesField" TextWrapping="Wrap"/></Grid>
+          <TextBlock Name="TapeLengthText" Text="-" Foreground="{DynamicResource Dim}" Margin="0,6,0,0"/>
+          <TextBlock Name="TapeDetail" Foreground="{DynamicResource Dim}" Text="Choose a tape from the shelf, add a file or download one." Margin="0,4,0,10"/>
+          <WrapPanel><Button Name="TapeSave" Tag="S" Content="SAVE TO LIBRARY"/><Button Name="TapeRemove" Tag="R" Content="REMOVE"/><Button Name="TapeFolder" Tag="F" Content="OPEN FOLDER"/></WrapPanel>
+          <TextBlock Style="{StaticResource Note}" Text="Removing an entry keeps its audio file."/>
+         </StackPanel>
+        </HeaderedContentControl>
+       </StackPanel>
+       <StackPanel Grid.Column="2">
+        <HeaderedContentControl Style="{StaticResource FrameDouble}" Header="PLAYER / CASSETTE IN" BorderBrush="{DynamicResource C2}">
+         <StackPanel>
+          <WrapPanel><TextBlock Text="ON THE APPLE, TYPE:" Foreground="{DynamicResource Dim}" Margin="0,0,12,0" VerticalAlignment="Center"/><Border Background="{DynamicResource Sel}" Padding="10,2"><TextBlock Name="TapeLoadBig" Text="LOAD" Foreground="{DynamicResource OnSel}" FontSize="28"/></Border></WrapPanel>
+          <DockPanel Margin="0,14,0,8"><TextBlock Name="TapePosition" DockPanel.Dock="Right" Text="0:00" Width="130" TextAlignment="Right" VerticalAlignment="Center"/><ProgressBar Name="TapeProgress" Height="24" Minimum="0" Maximum="1"/></DockPanel>
+          <DockPanel Margin="0,0,0,10"><TextBlock Text="PLAYER VOLUME" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,14,0"/><TextBlock Name="TapeVolumeText" DockPanel.Dock="Right" Text="100%" Width="64" TextAlignment="Right" VerticalAlignment="Center"/><Slider Name="TapeVolume" Minimum="0" Maximum="100" Value="100"/></DockPanel>
+          <WrapPanel><Button Name="TapePlay" Tag="P" Content="PLAY TO CASSETTE IN" Style="{StaticResource Primary}"/><Button Name="TapeStop" Tag="X" Content="STOP PLAYBACK"/></WrapPanel>
+          <TextBlock Style="{StaticResource Note}" Text="Play checks the file's SHA-256 first. Stopping part-way leaves the Apple waiting or with a partial load; press Ctrl-Reset and start again."/>
+         </StackPanel>
+        </HeaderedContentControl>
+        <HeaderedContentControl Style="{StaticResource Frame}" Header="BEFORE YOU PRESS PLAY" BorderBrush="{DynamicResource C3}" Margin="0,12,0,0">
+         <StackPanel>
+          <TextBlock Text="1. Cable from the PC's headphone or line out to the IIe's cassette IN jack, not OUT. Bluetooth, HDMI and USB headsets will not reach it.&#10;2. Windows volume near maximum, player at 100%. Audio enhancements and notification sounds off.&#10;3. On the IIe: no disks, Ctrl-Reset, type the load command, press Return. No DOS may be booted for LOAD.&#10;4. Press P here. Most loads take 10 to 30 seconds and start by themselves."/>
+          <Button Name="TapeGuide" Tag="G" Content="CASSETTE GUIDE" HorizontalAlignment="Left" Margin="0,12,0,8"/>
+          <TextBlock Style="{StaticResource Note}" Text="The IIc and IIgs have no cassette input. An original Apple II uses 800.A00R 800G for game server tapes."/>
+         </StackPanel>
+        </HeaderedContentControl>
+       </StackPanel>
+      </Grid>
+      <HeaderedContentControl Style="{StaticResource Frame}" Header="ADD TAPES / ASCII EXPRESS GAME SERVER" BorderBrush="{DynamicResource C5}" Margin="0,12,0,0">
+       <StackPanel>
+        <TextBlock Margin="0,0,0,8" Text="Open the game server in your browser, copy a game's audio link, paste it here and download it once. Downloads stay in this release's build folder, so later plays work offline. Local WAV, AIFF and MP3 files can be added too."/>
+        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="60"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><TextBlock Text="AUDIO LINK (HTTPS)" VerticalAlignment="Center"/><Line Grid.Column="1" Style="{StaticResource Leader}"/><TextBox Grid.Column="2" Name="TapeUrlField"/></Grid>
+        <WrapPanel><Button Name="TapeOpenServer" Tag="O" Content="OPEN GAME SERVER"/><Button Name="TapeDownload" Tag="W" Content="DOWNLOAD TO LIBRARY" Style="{StaticResource Primary}"/><Button Name="TapeCancel" Tag="C" Content="CANCEL DOWNLOAD"/><Button Name="TapeAddFile" Tag="A" Content="ADD LOCAL FILE"/></WrapPanel>
+        <TextBlock Style="{StaticResource Note}" Text="AIFF becomes WAV with identical samples. MP3 works but is lossy and can fail to load. Games and their audio belong to their owners; the launcher fetches only the link you give it."/>
+       </StackPanel>
+      </HeaderedContentControl>
+      <HeaderedContentControl Style="{StaticResource Frame}" Header="TAPE JOURNAL" BorderBrush="{DynamicResource C4}" Margin="0,12,0,0">
+       <TextBox Name="TapeLog" Style="{StaticResource Log}" Height="140" Text="No tape played yet. Playback uses this PC's audio output only; it never opens a serial port or changes a disk image."/>
+      </HeaderedContentControl>
+     </StackPanel></ScrollViewer>
+    </TabItem>
+
+    <TabItem Header="8 FARGLADE" Name="FgTab">
+     <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="0,0,10,0">
+      <HeaderedContentControl Style="{StaticResource FrameDouble}" Header="FARGLADE OS / 6502 HEARTH + Z80 GLADE" BorderBrush="{DynamicResource C2}">
+       <StackPanel>
+        <TextBlock Name="FgVersionText" Text="FARGLADE OS" FontSize="34" TextWrapping="NoWrap"/>
+        <TextBlock Margin="0,6,0,10" Text="Boots Farglade OS on an Apple IIe with a Premium SoftCard IIe and no disk drive, then serves it: every file and program, March Ash, the browser and IRC come over this serial link. Close ADTPro. At the ] prompt type IN# and the SSC slot, Return, then Ctrl+A, 14B, Return (9600 baud). Then boot."/>
+        <WrapPanel><Button Name="FgBoot" Tag="B" Content="BOOT FARGLADE OS" Style="{StaticResource Primary}"/><Button Name="FgStop" Tag="X" Content="STOP / RELEASE PORT"/><Button Name="FgSave" Tag="V" Content="SAVE PROFILE SETTINGS"/></WrapPanel>
+        <TextBlock Style="{StaticResource Note}" Text="The loader is typed into the Apple's monitor in about ten seconds, and the Apple has ninety to answer. Leave the session running while you use the Apple; stopping it leaves the Apple saying the uplink has gone quiet. Ctrl-Reset on the Apple returns to its monitor."/>
+       </StackPanel>
+      </HeaderedContentControl>
+      <HeaderedContentControl Style="{StaticResource Frame}" Header="LINK &amp; OPTIONS" BorderBrush="{DynamicResource C1}" Margin="0,12,0,0">
+       <StackPanel>
+        <UniformGrid Columns="3"><StackPanel Margin="0,0,16,0"><TextBlock Text="PORT"/><TextBox Name="FgPortField"/></StackPanel><StackPanel Margin="0,0,16,0"><TextBlock Text="SSC SLOT"/><ComboBox Name="FgSlotField"/></StackPanel><StackPanel><TextBlock Text="LINK BAUD"/><ComboBox Name="FgBaudField"/></StackPanel></UniformGrid>
+        <WrapPanel><CheckBox Name="FgReducedField" Content="REDUCED MOTION"/><CheckBox Name="FgMuteField" Content="START MUTED"/></WrapPanel>
+        <TextBlock Style="{StaticResource Note}" Text="Reduced motion drops the typewriter delays and offers guest entry at the lock at once. The baud here is the link's working rate; the loader always goes in at 9600."/>
+       </StackPanel>
+      </HeaderedContentControl>
+      <HeaderedContentControl Style="{StaticResource Frame}" Header="THE FAR ROADS / INTERNET FOR THE BROWSER AND IRC" BorderBrush="{DynamicResource C3}" Margin="0,12,0,0">
+       <StackPanel>
+        <TextBlock Margin="0,0,0,8" Text="Closed unless you open them here. Closed, the Apple's browser and IRC reach GladeNet and this PC only."/>
+        <CheckBox Name="FgOpenRoads" Content="OPEN THE FAR ROADS TO ANY HOST, FOR THE NEXT BOOT"/>
+        <UniformGrid Columns="2"><StackPanel Margin="0,0,16,0"><TextBlock Text="OR ONLY TO THESE HOSTS"/><TextBox Name="FgNetHostsField"/></StackPanel><StackPanel><TextBlock Text="MARCH ASH MODEL HOSTS BESIDES THIS PC"/><TextBox Name="FgRelayHostsField"/></StackPanel></UniformGrid>
+        <TextBlock Style="{StaticResource Note}" Text="Host lists are names or addresses separated by commas, saved with the profile. The open-to-any-host box is not saved: it is unchecked every time the launcher starts. Pages are fetched read-only; IRC sends only what is typed on the Apple."/>
+       </StackPanel>
+      </HeaderedContentControl>
+      <HeaderedContentControl Style="{StaticResource Frame}" Header="BUILD &amp; CHECK / NO SERIAL PORT" BorderBrush="{DynamicResource C5}" Margin="0,12,0,0">
+       <StackPanel>
+        <WrapPanel><Button Name="FgBuild" Tag="U" Content="BUILD FARGLADE OS"/><Button Name="FgCheck" Tag="C" Content="RUN PC CHECKS"/><Button Name="FgGuide" Tag="G" Content="OPERATING GUIDE"/><Button Name="FgFolder" Tag="F" Content="OPEN PROJECT FOLDER"/></WrapPanel>
+        <TextBlock Name="FgWhere" Foreground="{DynamicResource Dim}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+        <TextBlock Style="{StaticResource Note}" Text="Farglade OS is its own project with its own version and changelog. Build makes the loader, both processors' code and the lore pack (about half a minute). The PC checks take about as long and use neither the Apple nor a port."/>
+       </StackPanel>
+      </HeaderedContentControl>
+      <HeaderedContentControl Style="{StaticResource Frame}" Header="UPLINK JOURNAL" BorderBrush="{DynamicResource C4}" Margin="0,12,0,0">
+       <TextBox Name="FgLog" Style="{StaticResource Log}" Height="190" Text="No Farglade session yet. Serial is closed."/>
+      </HeaderedContentControl>
+     </StackPanel></ScrollViewer>
+    </TabItem>
+   </TabControl>
+
+   <Border Grid.Row="3" Height="2" Background="{DynamicResource Fg}" Margin="0,10,0,8"/>
+   <DockPanel Grid.Row="4">
+    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal"><Button Name="MonitorCycle" Tag="M" Content="MONITOR: GREEN" Margin="0,0,10,0"/><Button Name="Stop" Tag="ESC" Content="STOP / RELEASE PORT" Margin="0"/></StackPanel>
+    <WrapPanel VerticalAlignment="Center"><TextBlock Name="ProfileSummary" Margin="0,0,28,0" TextWrapping="NoWrap"/><TextBlock Name="PortSummary" Margin="0,0,28,0" TextWrapping="NoWrap"/><TextBlock Name="SessionState" Foreground="{DynamicResource Dim}" TextWrapping="NoWrap" Text="NO MANAGED SESSION"/></WrapPanel>
+   </DockPanel>
+   <Border Grid.Row="5" Background="{DynamicResource Bar}" Padding="10,2" Margin="0,8,0,0"><TextBlock Name="Status" Foreground="{DynamicResource OnBar}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Text="PRESS 1-8 FOR A SCREEN, M TO CHANGE MONITOR, OR A HIGHLIGHTED LETTER FOR ITS ACTION. NO SERIAL PORT HAS BEEN OPENED."/></Border>
+  </Grid>
+  <Rectangle Name="Scanlines" IsHitTestVisible="False">
+   <Rectangle.Fill><LinearGradientBrush MappingMode="Absolute" StartPoint="0,0" EndPoint="0,4" SpreadMethod="Repeat"><GradientStop Color="#00000000" Offset="0"/><GradientStop Color="#00000000" Offset="0.5"/><GradientStop Color="#38000000" Offset="0.75"/><GradientStop Color="#00000000" Offset="1"/></LinearGradientBrush></Rectangle.Fill>
+  </Rectangle>
+ </Grid>
+</Window>

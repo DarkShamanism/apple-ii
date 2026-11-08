@@ -1,0 +1,18 @@
+{
+  "chat": {
+    "enabled": true,
+    "hosted": "this site",
+    "protocol": "workshop-chat/1",
+    "room": "workshop",
+    "api": "/chat/api.php",
+    "lite": "/lite/chat.php",
+    "wire": "apple.crowbarsworkshop.com/chat"
+  },
+  "guestbook": {
+    "enabled": true,
+    "hosted": "this site",
+    "protocol": "workshop-guestbook/1",
+    "api": "/guestbook/api.php",
+    "lite": "/lite/guestbook.php"
+  }
+}

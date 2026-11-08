@@ -1,0 +1,16 @@
+# vnIIc attribution
+
+The palette, Floyd-Steinberg quantization approach, HGR scanline addressing,
+and paired-byte color packing in `pc/hires.cs` are adapted from `server.js` in
+vnIIc, Copyright (c) 2020 Joshua Bell, distributed under the MIT license copied
+verbatim in LICENSE beside this notice.
+
+Source supplied by the user: `vnIIc-master.zip`, SHA-256
+`3660e349352d7e655fd236543c18e0f4eb737985b1e3582d234895db154aa149`.
+Upstream project: https://github.com/a2stuff/vnIIc
+
+The native Windows host, capture/preview lifecycle, bootstrap configuration,
+and A2HR receiver are additions. A2HR uses a distinct versioned request and a
+checksummed, stoppable response protocol; it is not wire-compatible with the
+original vnIIc client or the A2MC receiver. Upstream HTML/JavaScript is not loaded
+or executed by the launcher. The original ZIP is not a runtime dependency.

@@ -1,0 +1,15 @@
+# VT323 attribution
+
+`VT323-Regular.ttf` is the VT323 typeface, Copyright 2011, The VT323 Project
+Authors (peter.hull@oikoi.com), distributed under the SIL Open Font License,
+Version 1.1, copied verbatim in `OFL.txt` beside this notice.
+
+Font file: Google Fonts release v18 (font version 2.000), downloaded through the
+Google Fonts CSS API, SHA-256
+`954e44d25e0ccd643f4ef15e75d56d3d76590d3c2b1e42b71b13d5df740a51a6`.
+License text: the `LICENSE` file of the `@fontsource/vt323` 5.3.0 package.
+Upstream project: https://github.com/google/fonts (`ofl/vt323`).
+
+Crowbar Launcher loads the unmodified font from this folder at run time; it is
+not installed system-wide. It is not a runtime requirement: without it the
+launcher falls back to Lucida Console.

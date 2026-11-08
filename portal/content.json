@@ -1,0 +1,261 @@
+{
+  "index": {
+    "title": "Crowbar's Apple II Workshop",
+    "paragraphs": [
+      "Welcome to the clearing. Small pages for old computers, new experiments, and good company.",
+      "This edition needs no scripts, cookies, pictures, or color. The default is 40 columns. The 80-column edition needs a compatible display setup.",
+      "The Wire is the workshop's own chat room, and the guestbook is its book for passing travelers. Both are kept on this site."
+    ],
+    "links": [
+      [
+        "Dispatches",
+        "news"
+      ],
+      [
+        "Library",
+        "library"
+      ],
+      [
+        "Connect your Apple II",
+        "connect"
+      ],
+      [
+        "The Wire: chat room",
+        "/lite/chat.php"
+      ],
+      [
+        "The Wire: guide",
+        "irc"
+      ],
+      [
+        "The guestbook",
+        "/lite/guestbook.php"
+      ],
+      [
+        "Display compatibility",
+        "displays"
+      ],
+      [
+        "40-column edition",
+        "/lite/40/"
+      ],
+      [
+        "80-column edition",
+        "/lite/80/"
+      ]
+    ]
+  },
+  "news": {
+    "title": "Workshop dispatches",
+    "paragraphs": [
+      "2026-10-11: A clearing for the Apple II. The first workshop pages collect connection notes, display profiles, and test material.",
+      "2026-10-11: Every monitor tells it differently. RGB and composite do not render alike. Read the display notes before choosing a graphics profile."
+    ],
+    "links": [
+      [
+        "Welcome dispatch",
+        "welcome"
+      ],
+      [
+        "Display notes",
+        "displays"
+      ]
+    ]
+  },
+  "welcome": {
+    "title": "A clearing for the Apple II",
+    "paragraphs": [
+      "2026-10-11 / Workshop notes",
+      "The workshop starts with a simple idea: a real Apple II should be able to read the same useful notes as a modern browser.",
+      "Farglade's uplink carries web text and the workshop's chat over the serial cable. This portal keeps its text edition small enough to be useful there.",
+      "The Wire is a chat room kept on this site, and the guestbook is beside it. Bring a question, a useful discovery, or just a note to say you passed by."
+    ],
+    "links": [
+      [
+        "Connection guide",
+        "connect"
+      ],
+      [
+        "Library",
+        "library"
+      ],
+      [
+        "The guestbook",
+        "/lite/guestbook.php"
+      ]
+    ]
+  },
+  "library": {
+    "title": "The workshop library",
+    "paragraphs": [
+      "Field guides and small test files for your next session. Native screen dumps are shown by A2TS, the loader in the test pack. Farglade's web browser does not display them."
+    ],
+    "links": [
+      [
+        "Connection field guide",
+        "connect"
+      ],
+      [
+        "Display compatibility",
+        "displays"
+      ],
+      [
+        "Native test screens",
+        "downloads"
+      ],
+      [
+        "The Wire: chat room",
+        "/lite/chat.php"
+      ],
+      [
+        "The Wire: guide",
+        "irc"
+      ],
+      [
+        "The guestbook",
+        "/lite/guestbook.php"
+      ],
+      [
+        "Farglade",
+        "https://www.farglade.com"
+      ],
+      [
+        "Farglade archive",
+        "https://archive.farglade.com"
+      ]
+    ]
+  },
+  "connect": {
+    "title": "Connect your Apple II",
+    "paragraphs": [
+      "Use the Farglade PC uplink. It handles HTTP, HTTPS and the workshop's chat on behalf of the Apple over the serial cable.",
+      "Allow apple.crowbarsworkshop.com in the PC uplink NetHosts list. Open https://apple.crowbarsworkshop.com/lite/ in Farglade.",
+      "In Farglade, enter RUN BROWSER, then enter the portal's public /lite/ address. Use the numbered links to read news and guides.",
+      "The chat room is on this same site: no other host has to be allowed for it.",
+      "The portal does not open serial ports, install software, or switch video modes. Select the correct display mode in your Apple software."
+    ],
+    "links": [
+      [
+        "The Wire: chat room",
+        "/lite/chat.php"
+      ],
+      [
+        "The Wire: guide",
+        "irc"
+      ],
+      [
+        "Display compatibility",
+        "displays"
+      ],
+      [
+        "Text home",
+        "index"
+      ]
+    ]
+  },
+  "irc": {
+    "title": "The Wire: the workshop chat",
+    "paragraphs": [
+      "The Wire is the workshop's own chat room. It is kept on this site: no IRC network, no account, no password.",
+      "Allow apple.crowbarsworkshop.com in your PC uplink NetHosts list. That one name covers these pages and the room.",
+      "IN THE BROWSER: open /lite/chat.php (the first link below). Take a name with the page's form, then say a line with it. Look again shows what has been said since.",
+      "IN THE WIRE PROGRAM (Farglade OS 0.9.0 or later), where the talk scrolls by itself:",
+      "RUN IRC\n/NICK YourName\n/SERVER apple.crowbarsworkshop.com/chat",
+      "Then type to talk. /ME does something, /NAMES lists who is here, /QUIT closes the wire.",
+      "A name is 1 to 16 letters, digits, - or _, starting with a letter. A line is up to 200 plain ASCII characters; anything else is shown as a question mark.",
+      "The room keeps its last 300 lines and shows them to whoever opens it. It is public. Use short messages. No harassment, flooding, or personal information. Ask before posting long logs.",
+      "A modern browser can use /chat/ on this site; it talks in the same room.",
+      "Checked on a PC against a local copy of this site. Not yet tried from an Apple II."
+    ],
+    "links": [
+      [
+        "The Wire: chat room",
+        "/lite/chat.php"
+      ],
+      [
+        "Browser chat",
+        "/chat/"
+      ],
+      [
+        "Connection guide",
+        "connect"
+      ],
+      [
+        "Text home",
+        "index"
+      ]
+    ]
+  },
+  "displays": {
+    "title": "Display compatibility",
+    "paragraphs": [
+      "Choose the graphics mode and display output separately. An RGB connection alone does not provide double hi-res capability.",
+      "TEXT: 40 columns is the baseline. 80 columns needs compatible hardware and software. These pages use plain ASCII and do not depend on color.",
+      "LO-RES: 40 by 48 cells, 16 colors. Native test files offer a green/yellow approximation or a black/white version.",
+      "HI-RES: 280 by 192 dots with constrained artifact colors. The native test pack uses a monochrome bitmap fallback. Composite color may show fringes; use monochrome mode for a clean contrast check.",
+      "DOUBLE HI-RES: 560 by 192 monochrome dots, or 140 by 192 16-color pixels. Compatible Apple hardware and auxiliary memory are required. This pack supplies the monochrome form only.",
+      "RGB: palettes, modes and card controls vary. Select the right mode on your card. No universal RGB driver or automatic detection is supplied.",
+      "COMPOSITE: color depends on video timing, television standard and monitor adjustment. Browser previews approximate a look; they do not emulate the signal.",
+      "MONOCHROME: the monitor determines green, amber or white phosphor. Website themes cannot change it. Contrast matters more than brand colors.",
+      "The modern portal offers Farglade parchment, forest green, amber and high contrast themes. Hi-res and monochrome use contrast instead of promising exact parchment.",
+      "A2TS, the loader in the test pack, shows the native test screens from ProDOS. The screens and the loader are unverified on real hardware. Farglade's text browser does not show these binary downloads."
+    ],
+    "links": [
+      [
+        "Native files and format notes",
+        "downloads"
+      ],
+      [
+        "Apple II reference manual",
+        "https://www.applelogic.org/files/AIIREF.pdf"
+      ],
+      [
+        "Apple IIe technical reference",
+        "https://www.applelogic.org/files/AIIETECHREF3.pdf"
+      ]
+    ]
+  },
+  "downloads": {
+    "title": "Native display test pack",
+    "paragraphs": [
+      "These are raw screen-memory files, not web pictures. A2TS, the loader on this page, is a small ProDOS program that shows them on an Apple II or an emulator. Nothing here sends files to your Apple: use your usual disk or transfer tool.",
+      "A2TS: a ProDOS binary that loads and runs at $6000. Put it on a ProDOS volume as A2TS (type BIN, address $6000) beside the four screens, named LORES.COLOR, LORES.MONO, HIRES.MONO and DHGR.MONO. Then BRUN A2TS and pick 1 to 4. Any key returns to the menu; Esc leaves.",
+      "LO-RES: 1024 bytes at $0400. Only 960 visible bytes belong to graphics; A2TS copies those and leaves the screen holes used by firmware alone.",
+      "HI-RES: 8192 bytes at $2000. Select page 1 full-screen hi-res and monochrome output. The high bit in every byte is clear.",
+      "DOUBLE HI-RES: 16384 bytes, auxiliary bank first and main bank second. Each bank loads at $2000-$3FFF. Do not load it as a single main-memory block. A2TS loads it only on a 128K IIe, IIc or IIgs. It uses auxiliary memory where ProDOS keeps part of /RAM: leave nothing you need there.",
+      "The supplied hi-res and DHGR files are monochrome contrast patterns, not 16-color renderers. The website preview is illustrative, not a binary decoder.",
+      "The profile manifest describes modes and file sizes for future software integration. It is not an implemented Farglade protocol extension.",
+      "The loader was run in a 6502 model on a PC, not yet on a real Apple II. Back up work before using it."
+    ],
+    "links": [
+      [
+        "A2TS loader (ProDOS binary, $6000)",
+        "/assets/a2ts.bin"
+      ],
+      [
+        "Lo-res color file",
+        "/assets/lores-color.bin"
+      ],
+      [
+        "Lo-res monochrome file",
+        "/assets/lores-mono.bin"
+      ],
+      [
+        "Hi-res monochrome file",
+        "/assets/hires-mono.bin"
+      ],
+      [
+        "Double hi-res monochrome file",
+        "/assets/dhgr-mono.bin"
+      ],
+      [
+        "Profile manifest",
+        "/assets/profiles.json"
+      ],
+      [
+        "Display guide",
+        "displays"
+      ]
+    ]
+  }
+}
